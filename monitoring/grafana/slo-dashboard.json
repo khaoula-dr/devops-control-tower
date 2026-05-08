@@ -1,0 +1,59 @@
+{
+  "title": "SLO Dashboard - Voting App",
+  "panels": [
+    {
+      "title": "Uptime % (SLO: 99.9%)",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "avg_over_time(up{namespace=\"voting\"}[30d]) * 100"
+        }
+      ],
+      "thresholds": {
+        "steps": [
+          { "color": "red", "value": 0 },
+          { "color": "yellow", "value": 99 },
+          { "color": "green", "value": 99.9 }
+        ]
+      }
+    },
+    {
+      "title": "Error Budget Restant (minutes/mois)",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "43 - (sum(increase(kube_pod_container_status_restarts_total{namespace=\"voting\"}[30d])) * 2)"
+        }
+      ],
+      "thresholds": {
+        "steps": [
+          { "color": "red", "value": 0 },
+          { "color": "yellow", "value": 10 },
+          { "color": "green", "value": 20 }
+        ]
+      }
+    },
+    {
+      "title": "Taux de disponibilité par service",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "up{namespace=\"voting\"}",
+          "legendFormat": "{{pod}}"
+        }
+      ]
+    },
+    {
+      "title": "Restarts des pods (30 derniers jours)",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "increase(kube_pod_container_status_restarts_total{namespace=\"voting\"}[30d])",
+          "legendFormat": "{{pod}}"
+        }
+      ]
+    }
+  ],
+  "time": { "from": "now-30d", "to": "now" },
+  "refresh": "1m"
+}

@@ -1,0 +1,45 @@
+{
+  "title": "Chaos Engineering Report",
+  "panels": [
+    {
+      "title": "Pods disponibles pendant le chaos",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "kube_deployment_status_replicas_available{namespace=\"voting\"}",
+          "legendFormat": "{{deployment}}"
+        }
+      ]
+    },
+    {
+      "title": "Temps de recovery (secondes)",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "avg(kube_pod_container_status_restarts_total{namespace=\"voting\"})"
+        }
+      ]
+    },
+    {
+      "title": "CPU pendant le chaos",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "rate(container_cpu_usage_seconds_total{namespace=\"voting\"}[1m])",
+          "legendFormat": "{{pod}}"
+        }
+      ]
+    },
+    {
+      "title": "Impact sur le SLO Error Budget",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "43 - (sum(increase(kube_pod_container_status_restarts_total{namespace=\"voting\"}[30d])) * 2)"
+        }
+      ]
+    }
+  ],
+  "time": { "from": "now-1h", "to": "now" },
+  "refresh": "10s"
+}
