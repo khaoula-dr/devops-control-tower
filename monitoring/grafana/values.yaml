@@ -1,0 +1,20 @@
+adminPassword: "admin123"
+
+service:
+  type: NodePort
+  nodePort: 32000
+
+persistence:
+  enabled: false
+
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+      - name: Prometheus
+        type: prometheus
+        url: http://prometheus-server.monitoring.svc.cluster.local
+        isDefault: true
+      - name: Loki
+        type: loki
+        url: http://loki.monitoring.svc.cluster.local:3100

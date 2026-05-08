@@ -1,0 +1,7 @@
+server:
+  persistentVolume:
+    enabled: false
+alertmanager:
+  enabled: true
+nodeExporter:
+  enabled: true

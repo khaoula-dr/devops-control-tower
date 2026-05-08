@@ -1,0 +1,11 @@
+loki:
+  auth_enabled: false
+  storage:
+    type: filesystem
+
+persistence:
+  enabled: false
+
+service:
+  type: ClusterIP
+  port: 3100
