@@ -1,0 +1,52 @@
+apiVersion: 1
+
+groups:
+  - orgId: 1
+    name: voting-app-alerts
+    folder: DevOps Control Tower
+    interval: 1m
+    rules:
+
+      - title: Pod Down
+        condition: A
+        data:
+          - refId: A
+            expr: up{namespace="voting"} == 0
+        for: 1m
+        annotations:
+          summary: "Pod {{ $labels.pod }} est DOWN !"
+        labels:
+          severity: critical
+
+      - title: CPU High (> 80%)
+        condition: A
+        data:
+          - refId: A
+            expr: rate(container_cpu_usage_seconds_total{namespace="voting"}[1m]) * 100 > 80
+        for: 2m
+        annotations:
+          summary: "CPU élevé sur {{ $labels.pod }} : {{ $values.A }}%"
+        labels:
+          severity: warning
+
+      - title: Memory High (> 80%)
+        condition: A
+        data:
+          - refId: A
+            expr: container_memory_usage_bytes{namespace="voting"} / container_spec_memory_limit_bytes{namespace="voting"} * 100 > 80
+        for: 2m
+        annotations:
+          summary: "Mémoire élevée sur {{ $labels.pod }} : {{ $values.A }}%"
+        labels:
+          severity: warning
+
+      - title: Error Budget Epuisé
+        condition: A
+        data:
+          - refId: A
+            expr: 43 - (sum(increase(kube_pod_container_status_restarts_total{namespace="voting"}[30d])) * 2) < 0
+        for: 1m
+        annotations:
+          summary: "Error Budget épuisé ! Déploiements bloqués."
+        labels:
+          severity: critical
