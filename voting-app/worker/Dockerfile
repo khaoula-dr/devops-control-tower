@@ -12,3 +12,4 @@ ENTRYPOINT ["dotnet", "Worker.dll"]
 
 
 
+
