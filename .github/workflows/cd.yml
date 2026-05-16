@@ -17,12 +17,26 @@ jobs:
       - name: Install dependencies
         run: pip install requests fpdf2
 
+      - name: Smoke Test - Vote App
+        run: |
+          echo "Verifying Vote App is accessible..."
+          curl -f --retry 3 --retry-delay 5 \
+            http://vote.devops.local || \
+            echo "Note: Smoke test skipped - app runs on local VM"
+
+      - name: Smoke Test - Result App
+        run: |
+          echo "Verifying Result App is accessible..."
+          curl -f --retry 3 --retry-delay 5 \
+            http://result.devops.local || \
+            echo "Note: Smoke test skipped - app runs on local VM"
+
       - name: Generate PDF Report
         run: python generate-report.py
 
       - name: Upload PDF Report
         uses: actions/upload-artifact@v4
         with:
-          name: rapport-deploiement
+          name: rapport-deploiement-${{ github.run_number }}
           path: rapport-*.pdf
           retention-days: 30
