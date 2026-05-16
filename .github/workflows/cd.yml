@@ -12,33 +12,13 @@ jobs:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Install ArgoCD CLI
-        run: |
-          curl -sSL -o argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
-          chmod +x argocd
-          sudo mv argocd /usr/local/bin/
+      - name: Install dependencies
+        run: pip install requests fpdf2
 
-      - name: Sync ArgoCD Application
-        run: |
-          argocd app sync voting-app \
-            --server ${{ secrets.ARGOCD_SERVER }} \
-            --auth-token ${{ secrets.ARGOCD_TOKEN }} \
-            --insecure
-
-      - name: Wait for Healthy
-        run: |
-          argocd app wait voting-app \
-            --health \
-            --server ${{ secrets.ARGOCD_SERVER }} \
-            --auth-token ${{ secrets.ARGOCD_TOKEN }} \
-            --insecure
-            
       - name: Generate PDF Report
-        run: |
-          pip install requests fpdf2
-          python generate-report.py
+        run: python generate-report.py
 
       - name: Upload PDF Report
         uses: actions/upload-artifact@v4
