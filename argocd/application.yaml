@@ -18,10 +18,10 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
-    # AJOUTE CETTE SECTION CI-DESSOUS
     retry:
-      limit: 5 # Nombre de tentatives de synchronisation en cas d'échec
+      limit: 3
       backoff:
-        duration: 10s # Attente de 10s après le premier échec
-        factor: 2 # Double le temps d'attente à chaque tentative (10s, 20s, 40s...)
-        maxDuration: 3m # Ne dépasse pas 3 minutes d'attente
+        duration: 5s
+        factor: 2
+        maxDuration: 1m
+  revisionHistoryLimit: 5
