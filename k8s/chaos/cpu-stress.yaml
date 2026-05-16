@@ -1,0 +1,16 @@
+apiVersion: chaos-mesh.org/v1alpha1
+kind: StressChaos
+metadata:
+  name: cpu-stress
+  namespace: default
+  annotations:
+    argocd.argoproj.io/hook: PostSync
+spec:
+  mode: one
+  selector:
+    labelSelectors:
+      app: worker
+  stressors:
+    cpu:
+      workers: 1
+      load: 100

@@ -1,0 +1,15 @@
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: network-delay-500ms
+  namespace: default
+  annotations:
+    argocd.argoproj.io/hook: PostSync
+spec:
+  action: delay
+  mode: all
+  selector:
+    labelSelectors:
+      app: vote
+  delay:
+    latency: "500ms"

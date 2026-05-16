@@ -1,0 +1,13 @@
+apiVersion: chaos-mesh.org/v1alpha1
+kind: PodChaos
+metadata:
+  name: vote-pod-kill
+  namespace: default
+  annotations:
+    argocd.argoproj.io/hook: PostSync
+spec:
+  action: pod-kill
+  mode: one
+  selector:
+    labelSelectors:
+      app: vote
