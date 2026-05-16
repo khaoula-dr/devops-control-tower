@@ -5,6 +5,7 @@ metadata:
   namespace: voting
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: web
+    traefik.ingress.kubernetes.io/router.middlewares: ""
 spec:
   rules:
     - host: vote.devops.local
@@ -26,6 +27,4 @@ spec:
               service:
                 name: result-result
                 port:
-                port:
-                 number: 80
-
+                  number: 80
