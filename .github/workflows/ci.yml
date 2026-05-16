@@ -5,8 +5,33 @@ on:
     branches: [ "main" ]
 
 jobs:
+  helm-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Helm
+        uses: azure/setup-helm@v3
+
+      - name: Helm Lint - Vote
+        run: helm lint helm/vote
+
+      - name: Helm Lint - Result
+        run: helm lint helm/result
+
+      - name: Helm Lint - Worker
+        run: helm lint helm/worker
+
+      - name: Helm Lint - Redis
+        run: helm lint helm/redis
+
+      - name: Helm Lint - Postgres
+        run: helm lint helm/postgres
+
   build-push:
     runs-on: ubuntu-latest
+    needs: helm-lint
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -37,4 +62,3 @@ jobs:
           context: ./voting-app/worker
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/worker:latest
-
