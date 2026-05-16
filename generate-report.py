@@ -176,7 +176,7 @@ def generate_report():
         "Le systeme est operationnel et pret pour la production."
     )
 
-    filename = f'/home/ubuntu/devops-control-tower/rapport-{datetime.now().strftime("%Y%m%d-%H%M")}.pdf'
+    filename = f'rapport-{datetime.now().strftime("%Y%m%d-%H%M")}.pdf'
     pdf.output(filename)
     print(f'Rapport genere : {filename}')
     return filename
