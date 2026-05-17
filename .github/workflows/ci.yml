@@ -29,9 +29,50 @@ jobs:
       - name: Helm Lint - Postgres
         run: helm lint helm/postgres
 
-  build-push:
+  security-scan:
     runs-on: ubuntu-latest
     needs: helm-lint
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Gitleaks - Scan secrets
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          config-path: security/gitleaks-config/.gitleaks.toml
+
+      - name: Trivy - Scan vote image
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: '${{ secrets.DOCKERHUB_USERNAME }}/vote:latest'
+          severity: 'CRITICAL,HIGH'
+          exit-code: '1'
+          ignore-unfixed: true
+          format: 'table'
+
+      - name: Trivy - Scan result image
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: '${{ secrets.DOCKERHUB_USERNAME }}/result:latest'
+          severity: 'CRITICAL,HIGH'
+          exit-code: '1'
+          ignore-unfixed: true
+          format: 'table'
+
+      - name: Trivy - Scan worker image
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: '${{ secrets.DOCKERHUB_USERNAME }}/worker:latest'
+          severity: 'CRITICAL,HIGH'
+          exit-code: '1'
+          ignore-unfixed: true
+          format: 'table'
+
+  build-push:
+    runs-on: ubuntu-latest
+    needs: security-scan
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
