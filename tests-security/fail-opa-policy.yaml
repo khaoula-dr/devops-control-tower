@@ -1,0 +1,29 @@
+# TEST NEGATIF — OPA Gatekeeper doit BLOQUER ce pod
+# Ce fichier viole les 3 règles en même temps :
+#   - no-root-containers  : runAsUser: 0 + runAsNonRoot: false
+#   - no-latest-tag       : image nginx:latest
+#   - no-port22           : containerPort: 22
+#
+# Commande de test :
+#   kubectl apply -f tests-security/fail-opa-policy.yaml
+#
+# Résultat attendu :
+#   Error from server (Forbidden): admission webhook denied the request:
+#   [no-root-containers] Container 'insecure-container' must not run as root
+#   [no-latest-tag] Container 'insecure-container' uses ':latest' tag
+#   [no-port22] Container 'insecure-container' exposes port 22 (SSH)
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-opa-failure
+  namespace: voting
+spec:
+  containers:
+    - name: insecure-container
+      image: nginx:latest               # ❌ Viole no-latest-tag
+      ports:
+        - containerPort: 22             # ❌ Viole no-port22
+      securityContext:
+        runAsUser: 0                    # ❌ Viole no-root-containers
+        runAsNonRoot: false             # ❌ Viole no-root-containers

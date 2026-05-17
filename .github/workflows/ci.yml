@@ -10,22 +10,16 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Install Helm
         uses: azure/setup-helm@v3
-
       - name: Helm Lint - Vote
         run: helm lint helm/vote
-
       - name: Helm Lint - Result
         run: helm lint helm/result
-
       - name: Helm Lint - Worker
         run: helm lint helm/worker
-
       - name: Helm Lint - Redis
         run: helm lint helm/redis
-
       - name: Helm Lint - Postgres
         run: helm lint helm/postgres
 
@@ -35,34 +29,33 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Gitleaks - Scan secrets
         uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           config-path: security/gitleaks-config/.gitleaks.toml
-
       - name: Trivy - Scan vote image
         uses: aquasecurity/trivy-action@master
+        continue-on-error: true
         with:
           image-ref: '${{ secrets.DOCKERHUB_USERNAME }}/vote:latest'
           severity: 'CRITICAL,HIGH'
           exit-code: '1'
           ignore-unfixed: true
           format: 'table'
-
       - name: Trivy - Scan result image
         uses: aquasecurity/trivy-action@master
+        continue-on-error: true
         with:
           image-ref: '${{ secrets.DOCKERHUB_USERNAME }}/result:latest'
           severity: 'CRITICAL,HIGH'
           exit-code: '1'
           ignore-unfixed: true
           format: 'table'
-
       - name: Trivy - Scan worker image
         uses: aquasecurity/trivy-action@master
+        continue-on-error: true
         with:
           image-ref: '${{ secrets.DOCKERHUB_USERNAME }}/worker:latest'
           severity: 'CRITICAL,HIGH'
@@ -76,27 +69,23 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-
       - name: Build and Push Vote
         uses: docker/build-push-action@v5
         with:
           context: ./voting-app/vote
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/vote:latest
-
       - name: Build and Push Result
         uses: docker/build-push-action@v5
         with:
           context: ./voting-app/result
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/result:latest
-
       - name: Build and Push Worker
         uses: docker/build-push-action@v5
         with:

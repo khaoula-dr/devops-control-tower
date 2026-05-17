@@ -1,0 +1,28 @@
+# TEST NEGATIF — Network Policy doit BLOQUER ce pod
+# Ce pod a un label non autorisé — aucune NetPol ne l'autorise
+# à communiquer avec redis ou postgres
+#
+# Commandes de test (2 étapes) :
+#
+# Étape 1 : Appliquer le pod
+#   kubectl apply -f tests-security/fail-network-policy.yaml
+#
+# Étape 2 : Tenter la connexion (doit échouer)
+#   kubectl exec -n voting test-netpol-failure -- nc -zv redis 6379 --wait=3
+#
+# Résultat attendu :
+#   nc: bad address 'redis'    OU    Connection timed out
+#   (le pod ne peut pas joindre redis — bloqué par deny-all.yaml)
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-netpol-failure
+  namespace: voting
+  labels:
+    app: unauthorized-scanner     # ❌ Label absent de toutes les NetPols → bloqué
+spec:
+  containers:
+    - name: scanner
+      image: alpine:3.18
+      command: ["sh", "-c", "sleep 3600"]   # On garde le pod vivant pour exec dedans

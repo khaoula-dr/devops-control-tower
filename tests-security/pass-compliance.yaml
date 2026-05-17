@@ -1,0 +1,28 @@
+# TEST POSITIF — OPA Gatekeeper doit ACCEPTER ce pod
+# Ce pod respecte les 3 règles OPA + autorisé par la NetPol vote→redis
+#
+# Commande de test :
+#   kubectl apply -f tests-security/pass-compliance.yaml
+#
+# Résultat attendu :
+#   pod/test-security-compliant created   ← pas d'erreur Forbidden
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-security-compliant
+  namespace: voting
+  labels:
+    app: vote                           # ✅ Autorisé par allow-vote-to-redis.yaml
+spec:
+  containers:
+    - name: secure-app
+      image: python:3.9-slim            # ✅ Tag versionné (pas :latest)
+      ports:
+        - containerPort: 80             # ✅ Port standard (pas 22)
+      command: ["sh", "-c", "sleep 3600"]
+      securityContext:
+        runAsUser: 1000                 # ✅ Non-root
+        runAsNonRoot: true              # ✅ Non-root explicite
+        allowPrivilegeEscalation: false # ✅ Bonne pratique
+        readOnlyRootFilesystem: true    # ✅ Bonus sécurité
