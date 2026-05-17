@@ -1,0 +1,24 @@
+title = "DevOps Control Tower — Gitleaks Config"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "docker-hub-token"
+description = "Docker Hub access token"
+regex = '''dckr_pat_[A-Za-z0-9_\-]{20,}'''
+tags = ["docker", "token"]
+
+[[rules]]
+id = "k8s-secret-base64"
+description = "Kubernetes secret data (base64)"
+regex = '''(?i)(password|secret|token|key)\s*:\s*[A-Za-z0-9+/]{20,}={0,2}'''
+tags = ["kubernetes", "secret"]
+
+[allowlist]
+description = "Fichiers de test et fichiers autorisés"
+paths = [
+  '''tests-security/fail-gitleaks-secrets\.txt''',
+  '''\.gitignore''',
+  '''README\.md''',
+]

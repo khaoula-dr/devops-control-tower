@@ -1,0 +1,17 @@
+# Configuration Trivy pour le pipeline CI/CD
+severity:
+  - CRITICAL
+  - HIGH
+
+exit-code: 1          # Fail le pipeline si vulnérabilité CRITICAL ou HIGH trouvée
+
+format: table          # Affichage dans les logs GitHub Actions
+
+ignore-unfixed: true   # Ignorer les CVE sans patch disponible
+
+scanners:
+  - vuln
+  - secret
+  - config
+
+timeout: "10m"
