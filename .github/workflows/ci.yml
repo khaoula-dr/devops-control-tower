@@ -76,19 +76,19 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build and Push Vote
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v7
         with:
           context: ./voting-app/vote
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/vote:latest
       - name: Build and Push Result
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v7
         with:
           context: ./voting-app/result
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/result:latest
       - name: Build and Push Worker
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v7
         with:
           context: ./voting-app/worker
           push: true
