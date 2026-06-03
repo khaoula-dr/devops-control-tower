@@ -11,7 +11,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       - name: Install Helm
-        uses: azure/setup-helm@v3
+        uses: azure/setup-helm@v5
       - name: Helm Lint - Vote
         run: helm lint helm/vote
       - name: Helm Lint - Result
